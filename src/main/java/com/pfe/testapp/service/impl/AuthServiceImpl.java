@@ -1,5 +1,7 @@
 package com.pfe.testapp.service.impl;
 
+import com.pfe.testapp.entities.Recruiter;
+import com.pfe.testapp.entities.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,6 @@ import com.pfe.testapp.repositories.CandidateRepository;
 import com.pfe.testapp.repositories.RecruiterRepository;
 import com.pfe.testapp.repositories.UserRepository;
 import com.pfe.testapp.service.AuthService;
-
 
 
 @Service
@@ -62,16 +63,72 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RegisterResponse registerRecruiter(RecruiterRegisterRequest request) {
-        return null;
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return RegisterResponse.builder()
+                    .success(false)
+                    .message("email existe déjà")
+                    .build();
+        }
+
+        Recruiter recruiter = new Recruiter();
+        recruiter.setEmail(request.getEmail());
+        recruiter.setNom(request.getNom());
+        recruiter.setPassword(passwordEncoder.encode(request.getPassword()));
+        recruiter.setRole(Role.RECRUITER);
+        recruiter.setStatutCompte(true);
+
+        recruiter.setFonction(request.getFonction());
+        recruiter.setPoste(request.getPoste());
+        recruiter.setDepartement(request.getDepartement());
+
+        Recruiter savedRecruiter = recruiterRepository.save(recruiter);
+
+        return RegisterResponse.builder()
+                .id(savedRecruiter.getId())
+                .email(savedRecruiter.getEmail())
+                .nom(savedRecruiter.getNom())
+                .role(savedRecruiter.getRole())
+                .success(true)
+                .message("Recruiter enregistré avec succès")
+                .build();
     }
 
     @Override
     public RegisterResponse registerAdmin(AdminRegisterRequest request) {
-        return null;
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return RegisterResponse.builder()
+                    .success(false)
+                    .message("email existe déjà")
+                    .build();
+        }
+
+        User admin = new User();
+        admin.setEmail(request.getEmail());
+        admin.setNom(request.getNom());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setRole(Role.ADMIN);
+        admin.setStatutCompte(true);
+
+        User savedAdmin = userRepository.save(admin);
+
+        return RegisterResponse.builder()
+                .id(savedAdmin.getId())
+                .email(savedAdmin.getEmail())
+                .nom(savedAdmin.getNom())
+                .role(savedAdmin.getRole())
+                .success(true)
+                .message("Admin enregistré avec succès")
+                .build();
     }
 
     @Override
     public LoginResponse login(LoginRequest request) {
         return null;
     }
+
+
+
+
 }

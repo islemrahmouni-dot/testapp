@@ -1,6 +1,8 @@
 package com.pfe.testapp.controller;
 
+import com.pfe.testapp.dto.AdminRegisterRequest;
 import com.pfe.testapp.dto.CandidateRegisterRequest;
+import com.pfe.testapp.dto.RecruiterRegisterRequest;
 import com.pfe.testapp.dto.RegisterResponse;
 import com.pfe.testapp.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,4 +23,27 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body(response);
     }
+
+    @PostMapping("/register/recruiter")
+    public ResponseEntity<RegisterResponse> registerRecruiter(
+            @RequestBody RecruiterRegisterRequest request) {
+
+        RegisterResponse response = authService.registerRecruiter(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/register/admin")
+    public ResponseEntity<RegisterResponse> registerAdmin(
+            @RequestBody AdminRegisterRequest request) {
+
+        RegisterResponse response = authService.registerAdmin(request);
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }
